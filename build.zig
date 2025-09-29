@@ -6,12 +6,14 @@ pub fn build(b: *std.Build) !void {
 
     const websocket_module = b.addModule("websocket", .{
         .root_source_file = b.path("src/websocket.zig"),
+        .target = target,
+        .optimize = optimize,
     });
 
     {
         const options = b.addOptions();
         options.addOption(bool, "websocket_blocking", false);
-        websocket_module.addOptions("build", options);
+        websocket_module.addOptions(b.fmt("build-{s}", .{target.result.zigTriple(b.allocator) catch @panic("OOM")}), options);
     }
 
     {
